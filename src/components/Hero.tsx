@@ -84,12 +84,13 @@ const Hero: React.FC<HeroProps> = ({ introReady = true, sectionRef: externalSect
             duration: 1.05,
             ease: "power2.out",
             stagger: 0.16,
-            onComplete: () => {
-              gsap.set("[data-hero-base]", { color: "transparent" });
-            },
           },
           2.26,
-        );
+        )
+        .add(() => {
+          gsap.set("[data-hero-base]", { color: "#171411" });
+          gsap.set("[data-hero-fill]", { autoAlpha: 0 });
+        });
     },
     { scope: sectionRef, dependencies: [introReady] },
   );

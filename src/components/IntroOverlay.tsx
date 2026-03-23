@@ -195,9 +195,9 @@ const IntroOverlay: React.FC<IntroOverlayProps> = ({
   );
 
   return (
-    <div ref={overlayRef} className="fixed inset-0 z-120 overflow-hidden">
-      <div data-intro="backdrop" className="absolute inset-0 bg-[#080605]" />
-      <div className="relative flex h-full items-center justify-center">
+    <div ref={overlayRef} className="fixed inset-0 z-[120] h-dvh w-screen overflow-hidden">
+      <div data-intro="backdrop" className="absolute inset-0 h-full w-full bg-[#080605]" />
+      <div className="relative flex h-full w-full items-center justify-center">
         <div data-intro="mark-shell" className="relative flex items-center justify-center">
           <div
             data-intro="mark"
