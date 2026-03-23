@@ -84,6 +84,9 @@ const Hero: React.FC<HeroProps> = ({ introReady = true, sectionRef: externalSect
             duration: 1.05,
             ease: "power2.out",
             stagger: 0.16,
+            onComplete: () => {
+              gsap.set("[data-hero-base]", { color: "transparent" });
+            },
           },
           2.26,
         );
@@ -196,7 +199,7 @@ const Hero: React.FC<HeroProps> = ({ introReady = true, sectionRef: externalSect
           <span className="flex w-full justify-between overflow-hidden">
             <span data-hero-word className="inline-flex items-end">
               <span className="relative inline-block">
-                <span>WEB3</span>
+                <span data-hero-base>WEB3</span>
                 <span
                   data-hero-fill
                   aria-hidden="true"
@@ -221,7 +224,7 @@ const Hero: React.FC<HeroProps> = ({ introReady = true, sectionRef: externalSect
             </span>
             <span data-hero-word className="inline-flex">
               <span className="relative inline-block">
-                <span>BITCOIN</span>
+                <span data-hero-base>BITCOIN</span>
                 <span
                   data-hero-fill
                   aria-hidden="true"
@@ -236,7 +239,7 @@ const Hero: React.FC<HeroProps> = ({ introReady = true, sectionRef: externalSect
           <span className="flex overflow-hidden">
             <span data-hero-word className="inline-flex">
               <span className="relative inline-block">
-                <span>RUNS THE LOGIC.</span>
+                <span data-hero-base>RUNS THE LOGIC.</span>
                 <span
                   data-hero-fill
                   aria-hidden="true"
