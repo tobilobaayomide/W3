@@ -1,7 +1,7 @@
-import { useRef, type RefObject } from "react";
+import { useRef, useState, type RefObject } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { FiArrowDownRight } from "react-icons/fi";
+import { FiArrowDownRight, FiMenu, FiX } from "react-icons/fi";
 import usePrefersReducedMotion from "../hooks/usePrefersReducedMotion";
 import HeroProtocolPanel from "./HeroProtocolPanel";
 
@@ -16,21 +16,20 @@ const Hero: React.FC<HeroProps> = ({ introReady = true, sectionRef: externalSect
   const internalSectionRef = useRef<HTMLElement | null>(null);
   const sectionRef = externalSectionRef ?? internalSectionRef;
   const prefersReducedMotion = usePrefersReducedMotion();
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   useGSAP(
     () => {
-      if (!introReady) {
-        return;
-      }
+      if (!introReady) return;
 
       if (prefersReducedMotion) {
+        gsap.set("[data-hero-base]", { color: "#171411" });
+        gsap.set("[data-hero-fill]", { autoAlpha: 0 });
         return;
       }
 
       const timeline = gsap.timeline({
-        defaults: {
-          ease: "power3.out",
-        },
+        defaults: { ease: "power3.out" },
       });
 
       timeline
@@ -78,7 +77,7 @@ const Hero: React.FC<HeroProps> = ({ introReady = true, sectionRef: externalSect
         )
         .fromTo(
           "[data-hero-fill]",
-          { clipPath: "inset(0 100% 0 0)" },
+          { clipPath: "inset(0 100% 0 0)", autoAlpha: 1 },
           {
             clipPath: "inset(0 0% 0 0)",
             duration: 1.05,
@@ -95,83 +94,109 @@ const Hero: React.FC<HeroProps> = ({ introReady = true, sectionRef: externalSect
     { scope: sectionRef, dependencies: [introReady] },
   );
 
+  const navLinks = [
+    { href: "/stack", label: "Stack" },
+    { href: "/trigger", label: "Trigger" },
+    { href: "/knowledge", label: "Knowledge" },
+    { href: "/signals", label: "Signals" },
+    { href: "/doc", label: "Doc" },
+    { href: "/console", label: "Console" },
+    { href: "/launch-tools", label: "Launch Tools", bold: true },
+  ];
+
   return (
     <section
       ref={sectionRef}
       className="relative flex min-h-screen w-full flex-col bg-[#e3dfd8]"
     >
-      {/* Top line */}
       <div
         data-hero-line="top"
         className="absolute top-7 left-4 right-4 h-px bg-black md:left-7 md:right-7"
       />
 
-      {/* Vertical lines - hidden on mobile */}
       <div
         data-hero-line="vertical"
-        className="absolute bottom-7 top-7 left-140 hidden w-px -translate-x-1/2 bg-black opacity-20 md:block"
+        className="absolute bottom-7 top-7 hidden w-px bg-black opacity-20 lg:block"
+        style={{ left: "38%" }}
       />
       <div
         data-hero-line="vertical"
-        className="absolute top-7 bottom-0 left-190 hidden w-px -translate-x-1/2 bg-black opacity-20 md:block"
+        className="absolute top-7 bottom-0 hidden w-px bg-black opacity-20 lg:block"
+        style={{ left: "62%" }}
       />
 
-      {/* Top bar */}
-      <div className="flex items-start justify-between px-4 pt-16 md:px-7">
+      <div className="flex items-center justify-between px-4 pt-16 md:px-7">
         <span data-hero="chrome" className="text-2xl font-extrabold md:text-3xl">
           W3.
         </span>
 
-        {/* Nav links - hidden on mobile */}
-        <div
+  
+        <nav
           data-hero="chrome"
-          className="absolute top-15 right-85 hidden flex-col gap-1 md:flex"
+          className="hidden lg:flex flex-col gap-1 items-end"
+          aria-label="Primary navigation"
         >
-          <a href="/stack" className="text-lg">
-            Stack
-          </a>
-          <a href="/trigger" className="text-lg">
-            Trigger
-          </a>
-          <a href="/knowledge" className="text-lg">
-            Knowledge
-          </a>
-          <a href="/signals" className="text-lg">
-            Signals
-          </a>
-          <a href="/doc" className="text-lg">
-            Doc
-          </a>
-          <a href="/console" className="text-lg">
-            Console
-          </a>
-          <a href="/launch-tools" className="text-lg font-bold underline underline-offset-4">
-            Launch Tools
-          </a>
-        </div>
+          {navLinks.map(({ href, label, bold }) => (
+            <a
+              key={href}
+              href={href}
+              className={`text-base xl:text-lg leading-snug hover:opacity-60 transition-opacity ${
+                bold ? "font-bold underline underline-offset-4" : ""
+              }`}
+            >
+              {label}
+            </a>
+          ))}
+        </nav>
 
-        <span data-hero="chrome" className="text-base md:text-lg">
-          [2026]
-        </span>
+        <div className="flex items-center gap-4">
+          <span data-hero="chrome" className="text-base md:text-lg">
+            [2026]
+          </span>
+          <button
+            data-hero="chrome"
+            className="lg:hidden p-1 -mr-1"
+            aria-label={mobileNavOpen ? "Close menu" : "Open menu"}
+            onClick={() => setMobileNavOpen((v) => !v)}
+          >
+            {mobileNavOpen ? <FiX size={22} /> : <FiMenu size={22} />}
+          </button>
+        </div>
       </div>
 
-      {/* Tagline */}
+      {mobileNavOpen && (
+        <nav
+          className="lg:hidden flex flex-col gap-3 px-4 pt-4 pb-6 border-b border-black/20"
+          aria-label="Mobile navigation"
+        >
+          {navLinks.map(({ href, label, bold }) => (
+            <a
+              key={href}
+              href={href}
+              className={`text-lg ${bold ? "font-bold underline underline-offset-4" : ""}`}
+              onClick={() => setMobileNavOpen(false)}
+            >
+              {label}
+            </a>
+          ))}
+        </nav>
+      )}
+
       <div
         data-hero="tagline"
-        className="mt-6 max-w-90 px-4 md:absolute md:top-15 md:left-142 md:mt-0 md:max-w-100"
+        className="mt-6 px-4 md:px-7 lg:absolute lg:top-16 lg:mt-0 lg:px-0"
+        style={{ left: "calc(38% + 1.75rem)", maxWidth: "min(26rem, 36%)" }}
       >
-        <span className="text-2xl font-extrabold md:text-3xl">
+        <span className="text-xl sm:text-2xl md:text-2xl lg:text-3xl font-extrabold leading-tight">
           WE BUILD TOOLS
           <br />
           FOR DEVELOPERS WHO TREAT THE BLOCKCHAIN AS EXECUTION, NOT SPECTACLE
         </span>
       </div>
 
-      {/* Bottom section */}
-      <div className="mt-auto flex flex-col items-start gap-6 px-4 pb-16 md:flex-row md:items-end md:px-7 md:pb-17">
+      <div className="mt-auto flex flex-col items-start gap-6 px-4 pb-12 md:pb-16 md:px-7 lg:flex-row lg:items-end lg:pb-17">
 
-        {/* Box */}
-        <div className="w-full shrink-0 md:w-auto">
+        <div className="w-full shrink-0 lg:w-auto">
           <a
             href="/engineering"
             data-hero="cta"
@@ -181,14 +206,13 @@ const Hero: React.FC<HeroProps> = ({ introReady = true, sectionRef: externalSect
           </a>
           <div
             data-hero="media"
-            className="h-65 w-full overflow-hidden bg-ink md:h-120 md:w-127"
+            className="h-56 w-full overflow-hidden bg-ink sm:h-64 md:h-80 lg:h-120 lg:w-md xl:w-127"
           >
             <HeroProtocolPanel />
           </div>
         </div>
 
-        {/* Big text */}
-        <div className="-mb-3 flex w-full flex-col text-4xl font-extrabold text-[#9c9b98] md:text-9xl">
+        <div className="-mb-3 flex w-full flex-col text-3xl font-extrabold text-[#9c9b98] sm:text-5xl md:text-7xl lg:text-9xl">
           <span className="flex w-full justify-between overflow-hidden">
             <span data-hero-word className="inline-flex">
               RETHINK
@@ -204,13 +228,13 @@ const Hero: React.FC<HeroProps> = ({ introReady = true, sectionRef: externalSect
                 <span
                   data-hero-fill
                   aria-hidden="true"
-                  className="absolute inset-0 overflow-hidden whitespace-nowrap text-ink"
+                  className="invisible absolute inset-0 overflow-hidden whitespace-nowrap text-ink"
                   style={{ clipPath: "inset(0 100% 0 0)" }}
                 >
                   WEB3
                 </span>
               </span>
-              <span className="text-sm font-normal md:text-lg">[Forge]</span>
+              <span className="text-xs font-normal sm:text-sm md:text-base lg:text-lg">[Forge]</span>
             </span>
             <span data-hero-word className="inline-flex">
               CAN
@@ -219,7 +243,7 @@ const Hero: React.FC<HeroProps> = ({ introReady = true, sectionRef: externalSect
               BE
             </span>
           </span>
-          <span className="flex gap-4 overflow-hidden md:gap-8">
+          <span className="flex gap-3 overflow-hidden sm:gap-4 md:gap-6 lg:gap-8">
             <span data-hero-word className="inline-flex">
               WHEN
             </span>
@@ -229,7 +253,7 @@ const Hero: React.FC<HeroProps> = ({ introReady = true, sectionRef: externalSect
                 <span
                   data-hero-fill
                   aria-hidden="true"
-                  className="absolute inset-0 overflow-hidden whitespace-nowrap text-ink"
+                  className="invisible absolute inset-0 overflow-hidden whitespace-nowrap text-ink"
                   style={{ clipPath: "inset(0 100% 0 0)" }}
                 >
                   BITCOIN
@@ -237,14 +261,15 @@ const Hero: React.FC<HeroProps> = ({ introReady = true, sectionRef: externalSect
               </span>
             </span>
           </span>
-          <span className="flex overflow-hidden">
-            <span data-hero-word className="inline-flex">
-              <span className="relative inline-block">
+
+          <span className="flex w-full overflow-hidden">
+            <span data-hero-word className="inline-flex min-w-0">
+              <span className="relative inline-block w-full">
                 <span data-hero-base>RUNS THE LOGIC.</span>
                 <span
                   data-hero-fill
                   aria-hidden="true"
-                  className="absolute inset-0 overflow-hidden whitespace-nowrap text-ink"
+                  className="invisible absolute inset-0 overflow-hidden whitespace-nowrap text-ink"
                   style={{ clipPath: "inset(0 100% 0 0)" }}
                 >
                   RUNS THE LOGIC.
@@ -256,7 +281,6 @@ const Hero: React.FC<HeroProps> = ({ introReady = true, sectionRef: externalSect
 
       </div>
 
-      {/* Bottom line */}
       <div
         data-hero-line="bottom"
         className="absolute bottom-7 left-4 right-4 h-px bg-black md:left-7 md:right-7"
