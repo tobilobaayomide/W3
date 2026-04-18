@@ -22,7 +22,8 @@ const Hero: React.FC<HeroProps> = ({ introReady = true, sectionRef: externalSect
       if (!introReady) {
         return;
       }
-  if (prefersReducedMotion) {
+
+      if (prefersReducedMotion) {
         gsap.set("[data-hero-base]", { color: "#171411" });
         gsap.set("[data-hero-fill]", { autoAlpha: 0 });
         return;
@@ -94,7 +95,7 @@ const Hero: React.FC<HeroProps> = ({ introReady = true, sectionRef: externalSect
           gsap.set("[data-hero-fill]", { autoAlpha: 0 });
         });
     },
-    { scope: sectionRef, dependencies: [introReady] },
+    { scope: sectionRef, dependencies: [introReady, prefersReducedMotion] },
   );
 
   return (
@@ -109,11 +110,11 @@ const Hero: React.FC<HeroProps> = ({ introReady = true, sectionRef: externalSect
 
       <div
         data-hero-line="vertical"
-        className="absolute bottom-7 top-7 left-140 hidden w-px -translate-x-1/2 bg-black opacity-20 md:block"
+        className="absolute bottom-7 top-7 left-140 hidden w-px -translate-x-1/2 bg-black opacity-20 xl:block"
       />
       <div
         data-hero-line="vertical"
-        className="absolute top-7 bottom-0 left-190 hidden w-px -translate-x-1/2 bg-black opacity-20 md:block"
+        className="absolute top-7 bottom-0 left-190 hidden w-px -translate-x-1/2 bg-black opacity-20 xl:block"
       />
 
       <div className="flex items-start justify-between px-4 pt-16 md:px-7">
@@ -123,7 +124,7 @@ const Hero: React.FC<HeroProps> = ({ introReady = true, sectionRef: externalSect
 
         <div
           data-hero="chrome"
-          className="absolute top-15 right-85 hidden flex-col gap-1 md:flex"
+          className="hidden flex-col gap-1 xl:absolute xl:top-15 xl:right-85 xl:flex"
         >
           <a href="/stack" className="text-lg">Stack</a>
           <a href="/trigger" className="text-lg">Trigger</a>
@@ -143,7 +144,7 @@ const Hero: React.FC<HeroProps> = ({ introReady = true, sectionRef: externalSect
 
       <div
         data-hero="tagline"
-        className="mt-6 max-w-90 px-4 md:absolute md:top-15 md:left-142 md:mt-0 md:max-w-100"
+        className="mt-6 max-w-90 px-4 xl:absolute xl:top-15 xl:left-142 xl:mt-0 xl:max-w-100"
       >
         <span className="text-2xl font-extrabold md:text-3xl">
           WE BUILD TOOLS
@@ -152,9 +153,9 @@ const Hero: React.FC<HeroProps> = ({ introReady = true, sectionRef: externalSect
         </span>
       </div>
 
-      <div className="mt-auto flex flex-col items-start gap-6 px-4 pb-16 md:flex-row md:items-end md:px-7 md:pb-17">
+      <div className="mt-auto flex flex-col items-start gap-6 px-4 pb-16 md:px-7 md:pb-17 xl:flex-row xl:items-end">
 
-        <div className="w-full shrink-0 md:w-auto">
+        <div className="w-full shrink-0 xl:w-auto">
           <a
             href="/engineering"
             data-hero="cta"
@@ -164,13 +165,13 @@ const Hero: React.FC<HeroProps> = ({ introReady = true, sectionRef: externalSect
           </a>
           <div
             data-hero="media"
-            className="h-65 w-full overflow-hidden bg-ink md:h-120 md:w-127"
+            className="h-65 w-full overflow-hidden bg-ink xl:h-120 xl:w-127"
           >
             <HeroProtocolPanel />
           </div>
         </div>
 
-        <div className="-mb-3 flex w-full flex-col text-4xl font-extrabold text-[#9c9b98] md:text-9xl">
+        <div className="-mb-3 flex w-full min-w-0 flex-col text-4xl font-extrabold text-[#9c9b98] xl:text-9xl">
           <span className="flex w-full justify-between overflow-hidden">
             <span data-hero-word className="inline-flex">RETHINK</span>
             <span data-hero-word className="inline-flex">WHAT</span>
