@@ -1,4 +1,4 @@
-import { useRef, type RefObject } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import usePrefersReducedMotion from "../hooks/usePrefersReducedMotion";
@@ -51,13 +51,39 @@ const IntroOverlay: React.FC<IntroOverlayProps> = ({
   const revealStartedRef = useRef(false);
   const completedRef = useRef(false);
   const prefersReducedMotion = usePrefersReducedMotion();
+  const [fontsReady, setFontsReady] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (prefersReducedMotion || typeof document === "undefined" || !("fonts" in document)) {
+      setFontsReady(true);
+      return;
+    }
+
+    document.fonts.ready
+      .then(() => {
+        if (!cancelled) {
+          setFontsReady(true);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setFontsReady(true);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [prefersReducedMotion]);
 
   useGSAP(
     () => {
       const overlay = overlayRef.current;
       const hero = heroRef.current;
 
-      if (!overlay) {
+      if (!overlay || !fontsReady) {
         return;
       }
 
@@ -191,7 +217,7 @@ const IntroOverlay: React.FC<IntroOverlayProps> = ({
           introTiming.overlayFadeStart,
         );
     },
-    { scope: overlayRef },
+    { scope: overlayRef, dependencies: [fontsReady, prefersReducedMotion] },
   );
 
   return (
@@ -205,7 +231,7 @@ const IntroOverlay: React.FC<IntroOverlayProps> = ({
         <div data-intro="mark-shell" className="relative flex items-center justify-center">
           <div
             data-intro="mark"
-            className="flex select-none items-end -space-x-3 font-extrabold leading-none text-[#e3dfd8] will-change-transform md:-space-x-6"
+            className="flex select-none items-end -space-x-3 font-bold leading-none text-[#e3dfd8] will-change-transform md:-space-x-6"
           >
             {introGlyphs.map((glyph) => (
               <span key={glyph} data-intro="glyph-mask" className="overflow-hidden">
